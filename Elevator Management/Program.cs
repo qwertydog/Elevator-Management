@@ -11,9 +11,9 @@ namespace Elevator_Management
         static void Main(string[] args)
         {
 
+            string fileName = "input.txt";
 
-
-
+            InputData.ReadFromFile(fileName);
 
 
         }
