@@ -6,19 +6,33 @@ using System.Threading.Tasks;
 
 namespace Elevator_Management
 {
-    class Instruction
+    internal struct Instruction
     {
-        private string instruction;
-        private Rider rider;
+        public readonly string riderID;
+        public readonly uint startTime, fromFloor, toFloor;
 
+        public bool isCompleted;
+        
         public Instruction(string instruction)
         {
-            this.instruction = instruction;
-
             string[] tokens = instruction.Split(' ');
 
-            rider = new Rider(UInt32.Parse(tokens[0].TrimStart('R')).AddInstruction(line));
+            riderID = tokens[0];
+            startTime = uint.Parse(tokens[1]);
+            fromFloor = uint.Parse(tokens[2]);
+            toFloor = uint.Parse(tokens[3]);
 
+            isCompleted = false;
+
+            Console.WriteLine(ToString());
+        }
+
+        public override string ToString()
+        {
+            return riderID + ' ' + 
+                startTime.ToString() + ' ' + 
+                fromFloor.ToString() + ' ' + 
+                toFloor.ToString();
         }
     }
 }

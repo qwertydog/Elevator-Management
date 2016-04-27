@@ -1,41 +1,57 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Elevator_Management
 {
-    static class InputData
+    internal class InputData
     {
-        private static Elevator[] elevators;
-        private static Rider[] riders;
-        private static List<Instruction> instructions;
+        public static readonly InputData Instance; 
 
-        public static void ReadFromFile(string fileName)
+        private List<Elevator> elevators;
+        private Queue<Instruction> instructions;
+
+        static InputData()
+        {
+            Instance = new InputData();
+        }
+
+        private InputData()
+        {
+            elevators = new List<Elevator>();
+            instructions = new Queue<Instruction>();
+        }
+
+        public uint numElevators { get; private set; }
+        public uint numInstructions { get; private set; }
+
+        //public uint numFloors { get; private set; }
+
+        public void Parse(string fileName)
         {
             try
             {
                 StreamReader file = new StreamReader(fileName);
 
-                for (int i = 0; i < Int32.Parse(file.ReadLine()); ++i)
-                {
-                    string[] tokens = file.ReadLine().Split(' ');
-
-                    elevators[i] = new Elevator(UInt32.Parse(tokens[0]), float.Parse(tokens[1]), UInt32.Parse(tokens[2]));
-                }
-
-                for (int i = 0; i < Int32.Parse(file.ReadLine()); ++i)
+                numElevators = uint.Parse(file.ReadLine());
+                for (int i = 0; i < numElevators; i++)
                 {
                     string line = file.ReadLine();
                     string[] tokens = line.Split(' ');
-
-                    instructions.Add(new Instruction(line));
-
-                    riders[UInt32.Parse(tokens[0].TrimStart('R'))].AddInstruction(line);
+                    elevators.Add(new Elevator(tokens[0], uint.Parse(tokens[1]), float.Parse(tokens[2]), uint.Parse(tokens[3])));
                 }
-            } 
+
+                numInstructions = uint.Parse(file.ReadLine());
+                for (int i = 0; i < numInstructions; i++)
+                {
+                    string line = file.ReadLine();
+                    var instruction = new Instruction(line);
+                    instructions.Enqueue(instruction);
+                }
+            }
             catch (FileNotFoundException ex)
             {
                 Console.WriteLine(ex);
@@ -43,24 +59,22 @@ namespace Elevator_Management
             }
         }
 
-        public static void Run()
+        public IEnumerable<Elevator> GetElevators()
         {
-            foreach (var instruction in instructions)
-            {
-                //
-            }
+            return elevators.AsReadOnly();
         }
 
-        public static Elevator ChooseElevator()
+        public Instruction GetNextInstruction()
         {
-            foreach (var elevator in elevators)
+            try
             {
-                if (elevator.GetRiders().Count() < elevator.capacity)
-                {
-                    return elevator;
-                }
+                return instructions.Dequeue();
             }
-            throw new Exception();
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            
         }
     }
 }

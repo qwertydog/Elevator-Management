@@ -6,28 +6,16 @@ using System.Threading.Tasks;
 
 namespace Elevator_Management
 {
-    class Rider
+    internal struct Rider
     {
-        private List<Instruction> instructions;
-        private static uint nextID = 1;
+        public readonly string ID;
 
-        public string id { get; private set; }
-        public uint time { get; private set; }
-        public uint sourceFloor { get; private set; }
-        public uint destinationFloor { get; private set; }
+        public Instruction instruction { get; set; }
 
-        public Rider(uint time, uint sourceFloor, uint destinationFloor)
+        public Rider(Instruction instruction)
         {
-            id = "R" + nextID++;
-            this.time = time;
-            this.sourceFloor = sourceFloor;
-            this.destinationFloor = destinationFloor;
+            ID = instruction.riderID;
+            this.instruction = instruction;
         }
-
-        public void AddInstruction(string instruction)
-        {
-            instructions.Add(new Instruction(instruction));
-        }
-
     }
 }
